@@ -1,0 +1,43 @@
+name: Calculator Workflow
+
+on:
+  workflow_dispatch:
+    inputs:
+      number1:
+        description: "First Number"
+        required: true
+        default: "10"
+      number2:
+        description: "Second Number"
+        required: true
+        default: "5"
+      operation:
+        description: "Choose operation (add, subtract, multiply, divide)"
+        required: true
+        default: "add"
+        type: choice
+        options:
+          - add
+          - subtract
+          - multiply
+          - divide
+
+jobs:
+  calculate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Perform Calculation
+        run: |
+          num1=${{ github.event.inputs.number1 }}
+          num2=${{ github.event.inputs.number2 }}
+          op=${{ github.event.inputs.operation }}
+
+          case $op in
+            "add") result=$((num1 + num2));;
+            "subtract") result=$((num1 - num2));;
+            "multiply") result=$((num1 * num2));;
+            "divide") result=$(echo "scale=2; $num1 / $num2" | bc);;
+            *) echo "Invalid operation"; exit 1;;
+          esac
+
+          echo "Result: $result"
